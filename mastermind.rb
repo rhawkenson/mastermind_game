@@ -50,23 +50,31 @@ You must enter 4 symbols and may ONLY use the following:"
   end 
 end 
 
+# The Player's guess is compared to the computer's code; 'x' is return for exactly correcty symbols, 'o' is returned for symbols that are in the code but not in the position they are currently in, and '_' is return for symbols that are not in the code at all 
 def code_check(guess)
-  for i in guess
-    if guess.index(i) == $computer_code.index(i)
-      puts "x"
-    elsif $computer_code.include?(i)
-      puts 'o'
-    else
-      puts "_"
-    end 
+  x = 0
+  while x < guess.length
+    if guess[x] == $computer_code[x]
+      print 'x'
+    elsif $computer_code.include?(guess[x])
+      print 'o'
+    else 
+      print '_'
+    end
+    x += 1
   end 
+  
   code_broken(guess)
 end 
 
+
+# If the guess perfectly matches the computer's code, the game ends 
 def code_broken(guess)
   if $computer_code == guess
-    puts 'YOU WON!'
+    puts "\nYOU WON!"
+    print guess
   else 
+    print "\n\n"
     player_guess()
   end 
 end 
