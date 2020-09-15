@@ -12,6 +12,8 @@
 # 6. Points start at 8 and are reduced each round 
 
 $symbol_options = ['!','@','#','$','%','&','*']
+$rounds = 0
+$game_end = false
 
 #Computer randomly selects 3 symbols from the $symbol_options (repeats are allowed)
 def computer_codemaster
@@ -25,12 +27,16 @@ end
 
 # Player is prompted to enter their guess, which is converted from a string to an array
 def player_guess 
+  if $rounds == 8
+    puts "GAME OVER. The code you were trying to break was #{$computer_code}"
+   
+  else 
   puts "Symbols: ! @ # $ % & *"
   puts "Enter your guess:"
   get_guess = gets.chomp
   guess = get_guess.split(//)
   guess_evaluation(guess)
-
+  end
 end 
 
 #The player's guess is evaluated - must be correct length and only contains $symbol_options
@@ -52,6 +58,7 @@ end
 
 # The Player's guess is compared to the computer's code; 'x' is return for exactly correcty symbols, 'o' is returned for symbols that are in the code but not in the position they are currently in, and '_' is return for symbols that are not in the code at all 
 def code_check(guess)
+  $rounds += 1
   x = 0
   while x < guess.length
     if guess[x] == $computer_code[x]
@@ -63,7 +70,6 @@ def code_check(guess)
     end
     x += 1
   end 
-  
   code_broken(guess)
 end 
 
@@ -83,3 +89,4 @@ computer_codemaster
 
 
 # guess.each{|symbol| $computer_code.include?(symbol)} 
+
