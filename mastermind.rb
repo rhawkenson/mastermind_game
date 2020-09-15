@@ -20,6 +20,7 @@ def computer_codemaster
     $computer_code += [$symbol_options.sample]
   end 
   $computer_code
+  player_guess()
 end 
 
 # Player is prompted to enter their guess, which is converted from a string to an array
@@ -28,7 +29,7 @@ def player_guess
   puts "Enter your guess:"
   get_guess = gets.chomp
   guess = get_guess.split(//)
-  player_codeguesser(guess)
+  guess_evaluation(guess)
 
 end 
 
@@ -36,13 +37,41 @@ end
 def guess_evaluation(guess)
   if guess.length == 4
     if guess.all?{|symbol| $symbol_options.include?(symbol)}
-      puts 'valid entry'
+      code_check(guess)
+    else 
+      puts "\n\nINVALID CODE. Please re-enter your code. 
+  You must enter 4 symbols and may ONLY use the following:"
+      player_guess()
     end 
   else 
    puts "\n\nINVALID CODE. Please re-enter your code. 
 You must enter 4 symbols and may ONLY use the following:"
-    guess_evaluation()
+    player_guess()
   end 
 end 
 
-player_guess()
+def code_check(guess)
+  for i in guess
+    if guess.index(i) == $computer_code.index(i)
+      puts "x"
+    elsif $computer_code.include?(i)
+      puts 'o'
+    else
+      puts "_"
+    end 
+  end 
+  code_broken(guess)
+end 
+
+def code_broken(guess)
+  if $computer_code == guess
+    puts 'YOU WON!'
+  else 
+    player_guess()
+  end 
+end 
+
+computer_codemaster
+
+
+# guess.each{|symbol| $computer_code.include?(symbol)} 
