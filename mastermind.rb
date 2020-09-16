@@ -134,16 +134,19 @@ class Codebreaker
     $rounds += 1
     $points -= 1 
     x = 0
+    feedback = []
     while x < guess.length
       if guess[x] == code[x]
-        print 'x'
+        feedback += ['x']
       elsif code.include?(guess[x])
-        print 'o'
+        feedback += ['o']
       else 
-        print '_'
+        feedback += ['_']
       end
       x += 1
+      feedback
     end 
+    print feedback.join
     self.code_broken(guess, code)
   end 
 
