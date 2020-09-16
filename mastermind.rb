@@ -15,11 +15,10 @@
 
 # ------- Project Code -------
 $symbol_options = ['!','@','#','$','%','&','*','^','?']
-$rounds = 0
-$game_end = false
-$points = 9
-
 class Game
+  $rounds = 0
+  $game_end = false
+  $points = 9
 
 # Explain the rules to the user
   def self.rules
@@ -30,8 +29,9 @@ puts "8 turns to crack the code. If you choose to break the code, the computer w
 puts "code, using the same symbols,and you will have 8 turns to break the code. "
     puts "\n\nWould you like to create the code or break the code?\n" 
     
-    Game.start
+    self.start
   end 
+
 #Prompt the user to create their own code or guess the computer's code
   def self.start
     puts "Enter 'create' to create the code or 'break' to break the computers's code: "
@@ -49,8 +49,8 @@ puts "code, using the same symbols,and you will have 8 turns to break the code. 
   end 
 end 
 
-
-class Codemaster < Game
+#Class names refer to the role of the computer. If the player chooses to break the code, the computer is the 'Codemaster'
+class Codemaster
 #Computer randomly selects 3 symbols from the $symbol_options (repeats are allowed)
   def self.computer_codemaster
     $computer_code = []
@@ -62,6 +62,7 @@ class Codemaster < Game
   end 
 end
 
+#Class names refer to the role of the computer. If the player chooses to create the code, the computer is the 'Codebreaker'
 class Codebreaker
   def self.player_codemaster
     puts "Symbols: ! @ # $ % ^ & * ?"
@@ -94,54 +95,67 @@ class Codebreaker
     puts "Enter your guess:"
     get_guess = gets.chomp
     guess = get_guess.split(//)
-    guess_evaluation(guess)
+    self.guess_evaluation(guess)
+    end
+  end 
+
+  def self.computer_guess
+    if $rounds == 8
+      puts "GAME OVER. The computer was not able to break your code!"
+    
+    else 
+    comp_guess = []
+      4.times do 
+        comp_guess += [$symbol_options.sample]
+      end 
+    self.code_check(comp_guess, $player_code)
     end
   end 
 
 #The player's guess is evaluated - must be correct length and only contains $symbol_options
-  def guess_evaluation(guess)
+  def self.guess_evaluation(guess)
     if guess.length == 4
       if guess.all?{|symbol| $symbol_options.include?(symbol)}
-        code_check(guess)
+        self.code_check(guess, $computer_code)
       else 
         puts "\n\nINVALID CODE. Please re-enter your code. 
     You must enter 4 symbols and may ONLY use the following:"
-        player_guess()
+        self.player_guess()
       end 
     else 
     puts "\n\nINVALID CODE. Please re-enter your code. 
   You must enter 4 symbols and may ONLY use the following:"
-      player_guess()
+      self.player_guess()
     end 
   end 
 
 # The Player's guess is compared to the computer's code; 'x' is return for exactly correcty symbols, 'o' is returned for symbols that are in the code but not in the position they are currently in, and '_' is return for symbols that are not in the code at all 
-  def code_check(guess)
+  def self.code_check(guess, code)
     $rounds += 1
     $points -= 1 
     x = 0
     while x < guess.length
-      if guess[x] == $computer_code[x]
+      if guess[x] == code[x]
         print 'x'
-      elsif $computer_code.include?(guess[x])
+      elsif code.include?(guess[x])
         print 'o'
       else 
         print '_'
       end
       x += 1
     end 
-    code_broken(guess)
+    self.code_broken(guess, code)
   end 
 
 
 # If the guess perfectly matches the computer's code, the game ends 
-  def code_broken(guess)
-    if $computer_code == guess
+  def self.code_broken(guess, code)
+    if code == guess
       puts "\nYOU WON!"
-      puts "You have earned #{$points} points"
+      puts "You have earned #{$points} points\n\n"
     else 
       print "\n\n"
-      player_guess()
+      self.player_guess()
     end 
   end 
 end 
