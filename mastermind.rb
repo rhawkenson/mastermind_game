@@ -20,6 +20,8 @@ $game_end = false
 $points = 9
 
 class Game
+
+# Explain the rules to the user
   def self.rules
     puts "\n\nWelcome to MASTERMIND! You are tasked with creating an unbreakable code -OR- guessing" 
 puts "an unbreakable code. If you choose to create the code, you will make a 4-character code using only "
@@ -27,18 +29,19 @@ puts "the following symbols: #{$symbol_options}, and the computer will have "
 puts "8 turns to crack the code. If you choose to break the code, the computer will create a secret " 
 puts "code, using the same symbols,and you will have 8 turns to break the code. "
     puts "\n\nWould you like to create the code or break the code?\n" 
+    
     Game.start
   end 
-
+#Prompt the user to create their own code or guess the computer's code
   def self.start
     puts "Enter 'create' to create the code or 'break' to break the computers's code: "
     user_choice = gets.chomp
     role = user_choice.downcase
     
     if role == "create"
-      puts "you will create the code"
+      Codebreaker.player_codemaster
     elsif role == "break"
-      puts "you will break the computer's code"
+      Codemaster.computer_codemaster    
     else 
       puts "\nPlease enter a valid choice."
       Game.start
@@ -49,19 +52,40 @@ end
 
 class Codemaster < Game
 #Computer randomly selects 3 symbols from the $symbol_options (repeats are allowed)
-  def computer_codemaster
+  def self.computer_codemaster
     $computer_code = []
     4.times do 
       $computer_code += [$symbol_options.sample]
     end 
     $computer_code
-    player_guess()
+    Codebreaker.player_guess
   end 
 end
 
-class Codebreaker < Codemaster
+class Codebreaker
+  def self.player_codemaster
+    puts "Symbols: ! @ # $ % ^ & * ?"
+    puts "Please select your secret code:"
+    code = gets.chomp.split(//)
+
+    if code.length == 4
+      if code.all?{|symbol| $symbol_options.include?(symbol)}
+        $player_code = code
+      else 
+        puts "\n\nINVALID CODE. Please re-enter your code. 
+    You must enter 4 symbols and may ONLY use the following:"
+        self.player_codemaster()
+      end 
+    else 
+    puts "\n\nINVALID CODE. Please re-enter your code. 
+  You must enter 4 symbols and may ONLY use the following:"
+      self.player_codemaster()
+    end 
+  end
+
+
 # Player is prompted to enter their guess, which is converted from a string to an array
-  def player_guess 
+  def self.player_guess 
     if $rounds == 8
       puts "GAME OVER. The code you were trying to break was #{$computer_code}. You have earned 0 points."
     
