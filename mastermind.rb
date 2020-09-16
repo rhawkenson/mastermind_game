@@ -123,9 +123,11 @@ $guess_bank = []
 def computer_guess
   comp_guess = ['']
   
-
+# If rounds are all spent and the correct answer has not been guess, the game ends and the player wins. 
   if $rounds >= 8
     puts "GAME OVER. The computer was not able to break your code!\n\n"
+
+# The first round computer guess is completely random  
   elsif $rounds == 0
     4.times do 
       comp_guess += [$symbol_options.sample]
@@ -133,7 +135,8 @@ def computer_guess
     puts "Secret code is:   #{$player_code.join}"
     puts "Computer guessed: #{comp_guess.join}"
     code_check(comp_guess, $player_code)
-  
+    
+# 2nd-8th round guesses are selected by either keeping previous correct answers or pulling from an array (see above: $guess_bank) of symbols that are in the code but not in the correct position
   else 
     i = 0
     while i < 4
@@ -199,10 +202,6 @@ end
 
 # If the guess perfectly matches the computer's code, the game ends 
   def code_broken(guess, code)
-    # puts "Code: #{code}"
-    # puts "Player's Secret Code: #{$player_code}"
-    # puts "Guess: #{guess}"
-    # puts "Feedback: #{$feedback}"
 
 # If the computer is the codemaster, either end the game or keep getting the player's guesses
     if code == $computer_code  
