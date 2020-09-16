@@ -110,7 +110,7 @@ class Codebreaker
   def player_guess 
     if $rounds == 8
       puts "GAME OVER. The code you were trying to break was #{$computer_code}. You have earned 0 points."
-    
+
     else 
       puts "Symbols: ! @ # $ % ^ & * ?"
       puts "Enter your guess:"
@@ -118,23 +118,21 @@ class Codebreaker
       guess_evaluation($guess)
     end
   end 
-
+$guess_bank = []
 #Random computer guess is generated
 def computer_guess
-  comp_guess = []
-  guess_bank = []
+  comp_guess = ['']
+  
 
   if $rounds >= 8
-    puts "GAME OVER. The computer was not able to break your code!"
+    puts "GAME OVER. The computer was not able to break your code!\n\n"
   elsif $rounds == 0
     4.times do 
       comp_guess += [$symbol_options.sample]
     end 
+    puts "Secret code is:   #{$player_code.join}"
     puts "Computer guessed: #{comp_guess.join}"
     code_check(comp_guess, $player_code)
-
-    # puts "Computer guessed: #{comp_guess.join}"
-    # code_check(comp_guess, $player_code)
   
   else 
     i = 0
@@ -143,17 +141,23 @@ def computer_guess
         comp_guess[i] = $previous_guess[i]
         
       elsif $feedback[i] == 'o'
-        guess_bank += [$previous_guess[i]]
-      else
+        $guess_bank += [$previous_guess[i]]
         comp_guess[i] = $symbol_options.sample
+      else
+        if $guess_bank.length > 0
+          comp_guess[i] = $guess_bank.sample
+        else 
+          comp_guess[i] = $symbol_options.sample
+        end
       end 
       i += 1
     end 
+    puts $guess_bank.length
+    puts "Secret code is:   #{$player_code.join}"
     puts "Computer guessed: #{comp_guess.join}"
     code_check(comp_guess, $player_code)
   end 
-    
-  end
+end
 
 #The player's guess is evaluated - must be correct length and only contains $symbol_options
   def guess_evaluation(guess)
@@ -206,18 +210,17 @@ def computer_guess
         puts "\nYOU WON!"
         puts "You have earned #{$points} points\n\n"
       else 
-        print "\n\n code is computer code"
         player_guess()
       end 
 #If the computer is the code guesser, either end the game or keep getting the player's guesses
     elsif code == $player_code
-      puts "Press enter to continue"
-      gets.chomp
+      
       if code == guess
         puts "\nCOMPUTER WON!"
         puts "Computer earned #{$points} points\n\n"
       else 
-        print "\n\n code is player code \n\n"
+        puts "Press enter to continue"
+        gets.chomp
         $previous_guess = code
         self.computer_guess()
       end 
@@ -225,8 +228,8 @@ def computer_guess
       puts "the secret code is not working"
     end 
   end 
+
 end 
 
 
 Game.rules
-
