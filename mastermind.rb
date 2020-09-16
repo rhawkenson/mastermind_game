@@ -112,27 +112,48 @@ class Codebreaker
       puts "GAME OVER. The code you were trying to break was #{$computer_code}. You have earned 0 points."
     
     else 
-    puts "Symbols: ! @ # $ % ^ & * ?"
-    puts "Enter your guess:"
-    $guess = gets.chomp.split(//)
-    guess_evaluation($guess)
+      puts "Symbols: ! @ # $ % ^ & * ?"
+      puts "Enter your guess:"
+      $guess = gets.chomp.split(//)
+      guess_evaluation($guess)
     end
   end 
 
 #Random computer guess is generated
-  def computer_guess
-    if $rounds == 8
-      puts "GAME OVER. The computer was not able to break your code!"
-    
-    else 
-    comp_guess = []
-      4.times do 
-        comp_guess += [$symbol_options.sample]
+def computer_guess
+  comp_guess = []
+  guess_bank = []
+
+  if $rounds >= 8
+    puts "GAME OVER. The computer was not able to break your code!"
+  elsif $rounds == 0
+    4.times do 
+      comp_guess += [$symbol_options.sample]
+    end 
+    puts "Computer guessed: #{comp_guess.join}"
+    code_check(comp_guess, $player_code)
+
+    # puts "Computer guessed: #{comp_guess.join}"
+    # code_check(comp_guess, $player_code)
+  
+  else 
+    i = 0
+    while i < 4
+      if $feedback[i] == 'x'
+        comp_guess[i] = $previous_guess[i]
+        
+      elsif $feedback[i] == 'o'
+        guess_bank += [$previous_guess[i]]
+      else
+        comp_guess[i] = $symbol_options.sample
       end 
-      puts "Computer guessed: #{comp_guess.join}"
-      code_check(comp_guess, $player_code)
-    end
+      i += 1
+    end 
+    puts "Computer guessed: #{comp_guess.join}"
+    code_check(comp_guess, $player_code)
   end 
+    
+  end
 
 #The player's guess is evaluated - must be correct length and only contains $symbol_options
   def guess_evaluation(guess)
@@ -156,28 +177,28 @@ class Codebreaker
     $rounds += 1
     $points -= 1 
     x = 0
-    feedback = []
+    $feedback = []
     while x < guess.length
       if guess[x] == code[x]
-        feedback += ['x']
+        $feedback += ['x']
       elsif code.include?(guess[x])
-        feedback += ['o']
+        $feedback += ['o']
       else 
-        feedback += ['_']
+        $feedback += ['_']
       end
       x += 1
     end 
-    puts feedback.join
-    code_broken(guess, code, feedback)
+    puts $feedback.join
+    code_broken(guess, code)
   end 
 
 
 # If the guess perfectly matches the computer's code, the game ends 
-  def code_broken(guess, code, feedback)
+  def code_broken(guess, code)
     # puts "Code: #{code}"
     # puts "Player's Secret Code: #{$player_code}"
     # puts "Guess: #{guess}"
-    # puts "Feedback: #{feedback}"
+    # puts "Feedback: #{$feedback}"
 
 # If the computer is the codemaster, either end the game or keep getting the player's guesses
     if code == $computer_code  
@@ -197,6 +218,7 @@ class Codebreaker
         puts "Computer earned #{$points} points\n\n"
       else 
         print "\n\n code is player code \n\n"
+        $previous_guess = code
         self.computer_guess()
       end 
     else 
