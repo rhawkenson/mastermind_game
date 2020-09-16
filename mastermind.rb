@@ -11,9 +11,10 @@
 # 5. If player doesn't get the answer in 8 turns, computer reveals code
 # 6. Points start at 8 and are reduced each round 
 
-$symbol_options = ['!','@','#','$','%','&','*']
+$symbol_options = ['!','@','#','$','%','&','*','^','?']
 $rounds = 0
 $game_end = false
+$points = 9
 
 #Computer randomly selects 3 symbols from the $symbol_options (repeats are allowed)
 def computer_codemaster
@@ -28,10 +29,10 @@ end
 # Player is prompted to enter their guess, which is converted from a string to an array
 def player_guess 
   if $rounds == 8
-    puts "GAME OVER. The code you were trying to break was #{$computer_code}"
+    puts "GAME OVER. The code you were trying to break was #{$computer_code}. You have earned 0 points."
    
   else 
-  puts "Symbols: ! @ # $ % & *"
+  puts "Symbols: ! @ # $ % ^ & * ?"
   puts "Enter your guess:"
   get_guess = gets.chomp
   guess = get_guess.split(//)
@@ -59,6 +60,7 @@ end
 # The Player's guess is compared to the computer's code; 'x' is return for exactly correcty symbols, 'o' is returned for symbols that are in the code but not in the position they are currently in, and '_' is return for symbols that are not in the code at all 
 def code_check(guess)
   $rounds += 1
+  $points -= 1 
   x = 0
   while x < guess.length
     if guess[x] == $computer_code[x]
@@ -78,7 +80,7 @@ end
 def code_broken(guess)
   if $computer_code == guess
     puts "\nYOU WON!"
-    print guess
+    puts "You have earned #{$points} points"
   else 
     print "\n\n"
     player_guess()
